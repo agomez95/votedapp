@@ -7,9 +7,9 @@ contract CandidatesContract {
     uint public candidatesCounter = 0;
 
     /**Cuando se cree este contrato se ejecutara el siguiente constructor */
-    constructor () {
+    /*constructor () {
         addCandidate("Candidato 1", "Partido Prueba");
-    }
+    }*/
 
     //con este describire que se devuelve una vez creado un candidato
     event newCandidate(

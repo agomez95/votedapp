@@ -3,3 +3,35 @@ body{
     color: #fff;
     font-family: 'Courier New', Courier, monospace;
 }
+
+#poll{
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px 5px rgba(35,30,128,0,05);
+}
+/*#poll .answers{
+    padding: 20px 20px 10px;
+}*/
+.answer {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    padding: 0px 10px;
+    line-height: 40px;
+    color: #fff;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border: 1px solid #d4d4d4;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.answer span.percentage-value {
+    float:right;
+}
+.answer span.percentage-bar {
+    position: absolute;
+    top: 0%;
+    left: 0px;
+    height: 100%;
+    background: #6484c7;
+    transition: width 300ms ease-in-out;
+}

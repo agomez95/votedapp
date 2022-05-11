@@ -9,6 +9,7 @@ App = {
         App.render()
         await App.renderVotes()
         await App.renderCandidates()
+        await App.renderPoll()
     },
 
     loadEthereum: async () => {
@@ -59,6 +60,8 @@ App = {
         const candidateCounterNumber = candidateCounter.toNumber()
         
         let html = ''
+        let disableOption = `<option value="" selected disabled hidden>Elija un Candidato</option>`
+        html += disableOption
 
         for (let i = 1; i <= candidateCounterNumber; i++) {
             const candidate = await App.candidatesContract.candidates(i)  
@@ -90,7 +93,7 @@ App = {
             const voteCreated = vote[4]    
             
             let voteElement = `
-                <div class="card bg-dark rounded-0 mb-2">
+                <div class="card bg-dark rounded-0">
                     <div class="card-header d-flex justify-content-between align-center">
                         <span>N° de voto: #${vodeId}</span>
                         <div class="form-check form-switch">
@@ -102,7 +105,7 @@ App = {
                     </div>
                     <div class="card-body">
                         <span>Voto(Partido): ${voteOption}</span>
-                        <p class="text-muted">Vote made on ${new Date(voteCreated * 1000).toLocaleString()}</p>
+                        <p class="text-muted" style="margin: 0;">Vote made on ${new Date(voteCreated * 1000).toLocaleString()}</p>
                     </div>
                 </div>
             `
@@ -134,5 +137,70 @@ App = {
             from: App.account
         })
         window.location.reload()
-    }
+    },
+
+    renderPoll: async () => {
+        const voteCounter = await App.votesContract.votesCounter()
+        const voteCounterNumber = voteCounter.toNumber()
+
+        let totalVotes = 0
+        let proccesedVotes = 0
+        let agrupations = {}
+        let html = ''
+        let html2 = ''
+
+        if(voteCounterNumber == 0){
+            //console.log('No se han efectuado votos aun')
+        } else {
+            const votes = []
+            for (let i = 1; i <= voteCounterNumber; i++) {
+                const vote = await App.votesContract.votes(i)
+                votes.push(vote[i]) 
+                const voteOption = vote[2]
+                const voteDone = vote[3]
+                totalVotes++                
+                if(voteDone) { 
+                    proccesedVotes++ 
+                    if(!agrupations.hasOwnProperty(voteOption)) {
+                        //const prueba = { quanty : 1}
+                        const initializer = 1
+                        const option = voteOption
+                        agrupations[option] = initializer
+                    } else {
+                        agrupations[voteOption] += 1
+                    }
+                }
+            }
+        }
+        if(voteCounterNumber == 0){
+            //console.log('No se han efectuado votos aun')
+            let error =  `
+                <h1>No se han efectuado votos</h1>
+            `
+            html = error
+            document.querySelector('#poll').innerHTML = html
+        } else {
+            for (var group of Object.keys(agrupations)) {
+                let percentage = (agrupations[group]) * 100 / (proccesedVotes)
+                let countElement = `
+                    <label>${group} (${agrupations[group]})</label>
+                    <div class = "answer">
+                        <span class="percentage-bar" style="width: ${Math.round(percentage)}%"></span>
+                        <span class="percentage-value">${(Math.round(percentage * 100) / 100).toFixed(2)} %</span>              
+                    </div>
+                `
+                html += countElement
+            }
+            let message = `
+                <div class="card card-block bg-dark">
+                    <span>VOTOS TOTALES PROCESADOS:</span>
+                    <span class="text1">${proccesedVotes}</span>
+                </div>
+            `
+            html2 = message
+
+            document.querySelector('#answers').innerHTML = html
+            document.querySelector('#message').innerHTML = html2
+        }        
+    } 
 }

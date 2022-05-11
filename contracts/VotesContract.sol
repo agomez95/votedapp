@@ -7,9 +7,9 @@ contract VotesContract {
     uint public votesCounter = 0;
 
     /**Cuando se cree este contrato se ejecutara el siguiente constructor */
-    constructor () {
+    /*constructor () {
         doVote("Usuario 1", "Opcion Prueba");
-    }
+    }*/
 
     //con este describire que se devuelve una vez hecho un voto
     event VoteMade(
@@ -40,7 +40,7 @@ contract VotesContract {
     //hacer el voto
     function doVote(string memory _fullname, string memory _option) public {
         votesCounter++;
-        votes[votesCounter] = Vote(votesCounter, _fullname, _option, false, block.timestamp);
+        votes[votesCounter] = Vote(votesCounter, _fullname, _option, true, block.timestamp);
         //con esto recibo la tarea que se creo por medio del evento de arriba
         emit VoteMade(votesCounter, _fullname, _option, false, block.timestamp);
     }
